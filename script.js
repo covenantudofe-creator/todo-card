@@ -1,22 +1,44 @@
-const dueDate = new Date("2026-04-16");
-const now = new Date();
+const card = document.querySelector('[data-testid="test-todo-card"]');
 
-const timeRemaining = document.getElementById("timeRemaining");
+const checkbox = document.querySelector('[data-testid="test-todo-complete-toggle"]');
+const status = document.querySelector('[data-testid="test-todo-status"]');
+const title = document.querySelector('[data-testid="test-todo-title"]');
 
-const diff = dueDate - now;
+const editBtn = document.querySelector('[data-testid="test-todo-edit-button"]');
+const deleteBtn = document.querySelector('[data-testid="test-todo-delete-button"]');
 
-if (diff > 0) {
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  timeRemaining.textContent = `Due in ${days} day(s)`;
-} else {
-  const hours = Math.abs(Math.floor(diff / (1000 * 60 * 60)));
-  timeRemaining.textContent = `Overdue by ${hours} hour(s)`;
-}
 
-// Checkbox toggle
-const checkbox = document.getElementById("checkbox");
-const status = document.getElementById("status");
-
+// ✅ TOGGLE COMPLETE STATUS
 checkbox.addEventListener("change", () => {
-  status.textContent = checkbox.checked ? "Done" : "Pending";
+  if (checkbox.checked) {
+    status.textContent = "Done";
+    status.style.color = "green";
+    title.style.textDecoration = "line-through";
+    title.style.opacity = "0.6";
+  } else {
+    status.textContent = "Pending";
+    status.style.color = "#000";
+    title.style.textDecoration = "none";
+    title.style.opacity = "1";
+  }
+});
+
+
+// ✏️ EDIT TASK TITLE
+editBtn.addEventListener("click", () => {
+  const newTitle = prompt("Edit task title:", title.textContent);
+
+  if (newTitle && newTitle.trim() !== "") {
+    title.textContent = newTitle.trim();
+  }
+});
+
+
+// 🗑 DELETE ENTIRE CARD (FIXED)
+deleteBtn.addEventListener("click", () => {
+  const confirmDelete = confirm("Are you sure you want to delete this task?");
+
+  if (confirmDelete) {
+    card.remove();
+  }
 });
