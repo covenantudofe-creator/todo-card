@@ -1,0 +1,169 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BODY */
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #ffe6f0, #f8f8ff);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* CARD */
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* TITLE */
+h2 {
+  font-size: 20px;
+  color: #222;
+}
+
+/* DESCRIPTION */
+p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* PRIORITY BADGE */
+.priority {
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.priority.high {
+  background: #ffe0e0;
+  color: #d00000;
+}
+
+.priority.medium {
+  background: #fff4d6;
+  color: #c77d00;
+}
+
+.priority.low {
+  background: #e0f7f1;
+  color: #007f5f;
+}
+
+/* TIME + STATUS */
+#timeRemaining {
+  font-size: 13px;
+  color: #777;
+}
+
+#status {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+/* CHECKBOX + LABEL */
+label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* CUSTOM CHECKBOX FEEL */
+input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* TAGS */
+[data-testid="test-todo-tags"] {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f1f1f1;
+  color: #555;
+}
+
+.tag.urgent {
+  background: #ffd6e0;
+  color: #d6336c;
+}
+
+/* ACTION BUTTONS */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* BUTTON STYLE */
+button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* EDIT BUTTON */
+button[data-testid="test-todo-edit-button"] {
+  background: #e7f0ff;
+  color: #1d4ed8;
+}
+
+button[data-testid="test-todo-edit-button"]:hover {
+  background: #dbe7ff;
+}
+
+/* DELETE BUTTON */
+button[data-testid="test-todo-delete-button"] {
+  background: #ffe5e5;
+  color: #c1121f;
+}
+
+button[data-testid="test-todo-delete-button"]:hover {
+  background: #ffd6d6;
+}
+
+/* RESPONSIVE */
+@media (max-width: 320px) {
+  .card {
+    padding: 15px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+}
