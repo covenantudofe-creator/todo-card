@@ -1,3 +1,4 @@
+
 // =======================
 // ELEMENTS
 // =======================
@@ -29,12 +30,11 @@ const statusControl = document.querySelector('[data-testid="test-todo-status-con
 const expandBtn = document.querySelector('[data-testid="test-todo-expand-toggle"]');
 const collapsible = document.querySelector('[data-testid="test-todo-collapsible-section"]');
 
+// =======================
+// STATE
+// =======================
 let due = new Date("2026-04-16T00:00:00");
 let interval;
-
-// =======================
-// STATE BACKUP (IMPORTANT FOR CANCEL)
-// =======================
 let backupState = {};
 
 // =======================
@@ -45,12 +45,11 @@ deleteBtn.addEventListener("click", () => {
 });
 
 // =======================
-// OPEN EDIT MODE
+// OPEN EDIT MODE (SAVE SNAPSHOT)
 // =======================
 editBtn.addEventListener("click", () => {
   editForm.hidden = false;
 
-  // SAVE CURRENT STATE (FOR CANCEL RESTORE)
   backupState = {
     title: title.textContent,
     description: description.textContent,
@@ -61,7 +60,6 @@ editBtn.addEventListener("click", () => {
     checkbox: checkbox.checked
   };
 
-  // FILL FORM
   editTitle.value = backupState.title;
   editDescription.value = backupState.description;
   editPriority.value = backupState.priority;
@@ -69,23 +67,29 @@ editBtn.addEventListener("click", () => {
 });
 
 // =======================
-// CANCEL (RESTORES PREVIOUS STATE)
+// CANCEL (FULL RESTORE)
 // =======================
 cancelBtn.addEventListener("click", () => {
   title.textContent = backupState.title;
   description.textContent = backupState.description;
+
   priority.textContent = backupState.priority;
+  priority.setAttribute(
+    "data-priority",
+    backupState.priority.toLowerCase()
+  );
 
   due = backupState.due;
-  dueDate.textContent = "Due " + backupState.due.toISOString().split("T")[0];
+  dueDate.textContent =
+    "Due " + backupState.due.toISOString().split("T")[0];
 
-  setStatus(backupState.status, false);
+  setStatus(backupState.status);
 
   editForm.hidden = true;
 });
 
 // =======================
-// SAVE
+// SAVE (FULL SYNC FIXED)
 // =======================
 saveBtn.addEventListener("click", () => {
   if (!editTitle.value.trim()) {
@@ -95,31 +99,38 @@ saveBtn.addEventListener("click", () => {
 
   title.textContent = editTitle.value.trim();
   description.textContent = editDescription.value.trim();
+
   priority.textContent = editPriority.value;
+  priority.setAttribute(
+    "data-priority",
+    editPriority.value.toLowerCase()
+  );
 
   if (editDueDate.value) {
     due = new Date(editDueDate.value);
     dueDate.textContent = "Due " + editDueDate.value;
   }
 
+  // 🔥 IMPORTANT FIX: force full status sync
+  setStatus(statusControl.value);
+
   editForm.hidden = true;
 });
 
 // =======================
-// STATUS SYNC FUNCTION (CENTRAL LOGIC)
+// CENTRAL STATUS SYSTEM
 // =======================
-function setStatus(value, fromCheckbox = false) {
+function setStatus(value) {
   status.textContent = value;
   statusControl.value = value;
-
-  if (!fromCheckbox) {
-    checkbox.checked = value === "Done";
-  }
+  checkbox.checked = value === "Done";
 
   if (value === "Done") {
     title.style.textDecoration = "line-through";
     title.style.opacity = "0.6";
     stopTimer();
+    timeRemaining.textContent = "Completed";
+    overdue.textContent = "";
   } else {
     title.style.textDecoration = "none";
     title.style.opacity = "1";
@@ -128,15 +139,12 @@ function setStatus(value, fromCheckbox = false) {
 }
 
 // =======================
-// CHECKBOX CONTROL
+// SYNC EVENTS
 // =======================
 checkbox.addEventListener("change", () => {
   setStatus(checkbox.checked ? "Done" : "Pending");
 });
 
-// =======================
-// STATUS DROPDOWN CONTROL
-// =======================
 statusControl.addEventListener("change", () => {
   setStatus(statusControl.value);
 });
@@ -145,24 +153,21 @@ statusControl.addEventListener("change", () => {
 // EXPAND / COLLAPSE
 // =======================
 expandBtn.addEventListener("click", () => {
-  const expanded = expandBtn.getAttribute("aria-expanded") === "true";
+  const expanded =
+    expandBtn.getAttribute("aria-expanded") === "true";
 
   expandBtn.setAttribute("aria-expanded", !expanded);
   collapsible.style.display = expanded ? "none" : "block";
 });
 
 // =======================
-// TIME LOGIC
+// TIME SYSTEM
 // =======================
 function updateTime() {
   const now = new Date();
   const diff = due - now;
 
-  if (status.textContent === "Done") {
-    timeRemaining.textContent = "Completed";
-    overdue.textContent = "";
-    return;
-  }
+  if (status.textContent === "Done") return;
 
   if (diff < 0) {
     timeRemaining.textContent = "";
@@ -184,7 +189,7 @@ function updateTime() {
 }
 
 // =======================
-// TIMER CONTROL (STOP/START CLEANLY)
+// TIMER CONTROL
 // =======================
 function startTimer() {
   if (interval) return;
